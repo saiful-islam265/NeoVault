@@ -41,6 +41,16 @@ public class HomeController {
         return "create";
     }
 
+    @GetMapping("login")
+    public String login(Model model) {
+        return "login";
+    }
+
+    @GetMapping("reg")
+    public String registration(Model model) {
+        return "registration";
+    }
+
     @PostMapping("save")
     public String save(
             @Valid @ModelAttribute("customer") Customer customer,
