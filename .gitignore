@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 customer-photos
+src/main/resources/application.properties
