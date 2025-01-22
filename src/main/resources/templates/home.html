@@ -1,9 +1,92 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-full bg-gray-100">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folder Grid View</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Body background */
+        body {
+            background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+        }
+        header{
+            background: #cdd7e6;
+        }
+        main{
+            padding: 15px;
+            min-height: 450px;
+        }
+
+        /* Style for folder cards */
+        .folder-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .folder-card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .folder-icon {
+            font-size: 2rem;
+            color: #2563eb;
+        }
+
+        .folder-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .menu-button {
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 8px 12px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            color: #1f2937;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f5f9;
+        }
+    </style>
 </head>
 <body class="h-full">
 
@@ -14,7 +97,7 @@
                 <!-- Left Side - Logo and Navigation Links -->
                 <div class="flex items-center">
                     <div class="shrink-0">
-                        <img class="size-8" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
+                        <img class="h-8 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
                     </div>
                     <div class="hidden md:block">
                         <div class="ml-5 flex items-baseline space-x-4">
@@ -36,51 +119,59 @@
         </div>
     </nav>
     <header class="bg-white shadow">
+        <!-- Flash Message Display -->
+        <div th:if="${message}" class="bg-green-200 border border-green-400 border-solid mb-5 p-2 rounded-md text-green-900">
+            <p th:text="${message}"></p>
+        </div>
+
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900">List of customers</h1>
+            <a th:href="@{'/create'}" class="bg-blue-600 font-medium px-3 py-2 rounded-md text-sm text-white inline-block mb-5 hover:bg-blue-700"> Add New</a>
+
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">List of Files</h1>
         </div>
     </header>
     <main>
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-            <!-- Flash Message Display -->
-            <div th:if="${message}"  class="bg-green-200 border border-green-400 border-solid mb-5 p-2 rounded-md text-green-900">
-                <p th:text="${message}"></p>
+        <div class="grid grid-cols-2 gap-4 w-2/3 mx-auto">
+            <!-- Folder Card Example -->
+            <div class="folder-card relative" th:each="customer: ${customerList}">
+                <div class="flex items-center">
+                    <div class="folder-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                        </svg>
+                    </div>
+                    <span class="folder-name ml-3" th:text="${customer.firstName}"></span>
+                </div>
+                <div class="menu-button" onclick="toggleMenu(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 7a2 2 0 110-4 2 2 0 010 4zm0 5a2 2 0 110-4 2 2 0 010 4zm0 5a2 2 0 110-4 2 2 0 010 4z" />
+                    </svg>
+                </div>
+
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu">
+                    <a th:href="@{/customer/{id}(id=${customer.id})}">View</a>
+                    <a th:href="@{/customer/{id}/edit(id=${customer.id})}">Edit</a>
+                    <a th:href="@{/customer/{id}/delete(id=${customer.id})}">Delete</a>
+                </div>
             </div>
 
-            <a th:href="@{'/create'}" class="bg-blue-600 font-medium px-3 py-2 rounded-md text-sm text-white inline-block mb-5 hover:bg-blue-700"> Add New</a>
-            <table class="table-auto w-full">
-                <thead class="bg-gray-800 text-white uppercase">
-                <tr>
-                    <th class="px-6 py-3 text-center">ID</th>
-                    <th class="px-6 py-3 text-center">Photo</th>
-                    <th class="px-6 py-3 text-center">First Name</th>
-                    <th class="px-6 py-3 text-center">Last Name</th>
-                    <th class="px-6 py-3 text-center">Email</th>
-                    <th class="px-6 py-3 text-center">Phone</th>
-                    <th class="px-6 py-3 text-center">&nbsp;</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" th:each="customer: ${customerList}">
-                    <td class="px-6 py-4 text-center" th:text="${customer.id}"></td>
-                    <td class="px-6 py-4 text-center">
-                        <img th:src="@{${customer.photosImagePath}}" id=" thumbnail" class="h-16 w-auto border p-1 rounded-md" alt="Photo preview">
-                    </td>
-                    <td class="px-6 py-4 text-center" th:text="${customer.firstName}"></td>
-                    <td class="px-6 py-4 text-center" th:text="${customer.lastName}"></td>
-                    <td class="px-6 py-4 text-center" th:text="${customer.phone}"></td>
-                    <td class="px-6 py-4 text-center" th:text="${customer.email}"></td>
-                    <td class="px-6 py-4 text-center">
-                        <a th:href="@{/customer/{id}(id=${customer.id})}" class="bg-green-600 font-medium hover:bg-green-700 px-3 py-2 rounded-md text-sm text-white">View</a>
-                        <a th:href="@{/customer/{id}/edit(id=${customer.id})}" class="bg-blue-600 font-medium hover:bg-blue-700 px-3 py-2 rounded-md text-sm text-white">Edit</a>
-                        <a th:href="@{/customer/{id}/delete(id=${customer.id})}" class="bg-red-600 font-medium hover:bg-red-700 px-3 py-2 rounded-md text-sm text-white">Delete</a></td>
-                </tr>
-                </tbody>
-            </table>
         </div>
     </main>
 </div>
+<script>
+    function toggleMenu(event) {
+        const menu = event.target.closest('.folder-card').querySelector('.dropdown-menu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+
+        // Close the menu if clicked outside
+        document.addEventListener('click', function (e) {
+            if (!menu.contains(e.target) && !event.target.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        }, { once: true });
+    }
+</script>
 </body>
 </html>
