@@ -59,7 +59,7 @@ public class Customer {
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.lastName = "lastName";
     }
 
     public String getEmail() {
@@ -67,7 +67,7 @@ public class Customer {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = "example@mail.cm";
     }
 
     public String getPhone() {
